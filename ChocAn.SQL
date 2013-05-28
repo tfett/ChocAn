@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 28, 2013 at 02:15 AM
+-- Generation Time: May 28, 2013 at 03:36 AM
 -- Server version: 5.5.29
 -- PHP Version: 5.4.10
 
@@ -22,7 +22,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetManagerReport`(IN `arg1` DATE)
     NO SQL
     DETERMINISTIC
 BEGIN
-      SET @sql_text = 
+    	SET @sql_text = 
    CONCAT (
        "Select p.name, count(*), sum(sr.cost) from provider p, service s, serviceRel sr where s.recordDate > '"
        , arg1
@@ -144,6 +144,46 @@ BEGIN
     
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ModifyService`(IN `options` INT, IN `arg1` VARCHAR(4), IN `arg2` VARCHAR(200), IN `arg3` DOUBLE)
+    NO SQL
+BEGIN
+
+    CASE options
+    WHEN 1 THEN 
+   	 SET @sql_text = 
+   CONCAT (
+       "INSERT INTO `serviceRel` VALUES ('"
+       ,arg1
+       ,"', '"
+       ,arg2
+       ,"', "
+       ,arg3
+       , ")"
+    );
+
+	PREPARE s1 FROM @sql_text;
+	EXECUTE s1;
+	DROP PREPARE s1;
+    WHEN 2 THEN 
+    	SET @sql_text = 
+   CONCAT (
+       "UPDATE `serviceRel` SET `cost` = "
+       ,arg3
+       , ", `description` ='"
+       ,arg2
+       , "' WHERE `code` = '"
+       ,arg1
+       ,"' LIMIT 1"
+    );
+
+	PREPARE s1 FROM @sql_text;
+	EXECUTE s1;
+	DROP PREPARE s1;
+        
+
+    END CASE;
+END$$
+
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -250,4 +290,5 @@ INSERT INTO `serviceRel` (`code`, `description`, `cost`) VALUES
 ('NUTR', 'Nutritional Guidance Appointment', 75.99),
 ('CONC', 'Mental Counseling Therapy', 125.99),
 ('GROP', 'Group Counseling Therapy', 69.99),
-('GORG', 'Chocolate Overload Therapy', 35.99);
+('GORG', 'Chocolate Overload Therapy', 35.99),
+('TEST', 'Some Description GOOD', 26.89);
