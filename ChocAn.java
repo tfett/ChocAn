@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 
 public class ChocAn {
 
-  public static void main(String[] args) {
+	public static void main(String[] args) {
 		try {
 
 			 //Register the JDBC driver for MySQL.
@@ -42,7 +42,14 @@ public class ChocAn {
 			 
 			 //Takes (argument value Date start to current date)
 			 String query3 = "CALL GetManagerReport("+ qDate +")";
-
+			 
+			 //Takes (argument option 1=new 2 = update, CODE, Description, COST)
+			 opt = 2;
+			 String CODE = "TEST";
+			 String DESC = "Some Description GOOD?";
+			 double COST = 25.89; 
+			 String query4 = "CALL ModifyService("+ opt + ", '" + CODE + "', '" + DESC + "', " + COST +")";
+			 
 			 //Establish Connection to Database
 			 Connection con = DriverManager.getConnection(url, user, pass);
 			 
@@ -67,7 +74,10 @@ public class ChocAn {
 			 //Execute Query 3 - No returning result (writes to file)
 			 statement3.executeQuery();
 			 
-			 
+			//Prepare Test Query 4
+			 PreparedStatement statement4 = con.prepareStatement(query4);
+			 //Execute Query 3 - No returning result (writes to file)
+			 statement4.executeQuery();
 			 
 			 con.close();
 		 }catch( Exception e ) {
