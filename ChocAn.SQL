@@ -18,6 +18,54 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddService`(IN `arg1` DATE, IN `arg2` INT(9), IN `arg3` INT(9), IN `arg4` VARCHAR(4), IN `arg5` DATETIME, IN `arg6` VARCHAR(150))
+    NO SQL
+BEGIN
+
+   	 SET @sql_text = 
+   CONCAT (
+       "INSERT INTO `service` VALUES ('"
+       ,arg1
+       ,"', '"
+       ,arg2
+       ,"', "
+       ,arg3
+       ,"', "
+       ,arg4
+       ,"', "
+       ,arg5
+       ,"', "
+       ,arg6
+       , ")"
+    );
+
+	PREPARE s1 FROM @sql_text;
+	EXECUTE s1;
+	DROP PREPARE s1;
+        
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EFTReport`(IN `arg1` DATE)
+    NO SQL
+    DETERMINISTIC
+BEGIN
+    	SET @sql_text = 
+   CONCAT (
+       "Select p.name, sum(sr.cost) from provider p, service s, serviceRel sr where s.recordDate > '"
+       , arg1
+       , "' AND s.recordDate < '"
+       , CURDATE()
+       , "' AND s.providerID = p.providerID AND sr.code = s.code Group by p.name"
+       ," into outfile '/usr/local/dbOut/eft-reports-"
+       , NOW()
+       , ".csv'"
+    );
+
+	PREPARE s1 FROM @sql_text;
+	EXECUTE s1;
+	DROP PREPARE s1;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetManagerReport`(IN `arg1` DATE)
     NO SQL
     DETERMINISTIC
@@ -136,12 +184,132 @@ WHEN 3 THEN
     END CASE;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetService`(IN `arg1` VARCHAR (4))
+BEGIN
+   	 SELECT description 
+   	 FROM serviceRel
+   	 WHERE code  = arg1;
+    
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStatus`(IN `userId` INT)
 BEGIN
    	 SELECT status 
    	 FROM member
    	 WHERE memberId = userId;
     
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ModifyMember`(IN `options` INT, IN `arg1` INT(9), IN `arg2` VARCHAR(50), IN `arg3` VARCHAR(100), IN `arg4` VARCHAR(40), IN `arg5` VARCHAR(2), IN `arg6` VARCHAR(7), IN `arg7` VARCHAR(40))
+    NO SQL
+BEGIN
+
+    CASE options
+    WHEN 1 THEN 
+   	 SET @sql_text = 
+   CONCAT (
+       "INSERT INTO `member` VALUES ('"
+       ,arg1
+       ,"', '"
+       ,arg2
+       ,"', "
+       ,arg3
+       ,"', "
+       ,arg4
+       ,"', "
+       ,arg5
+       ,"', "
+       ,arg6
+       ,"', "
+       ,arg7
+       , ")"
+    );
+
+	PREPARE s1 FROM @sql_text;
+	EXECUTE s1;
+	DROP PREPARE s1;
+
+    WHEN 2 THEN 
+    	SET @sql_text = 
+   CONCAT (
+       "UPDATE `member` SET 
+        `name` = "
+       ,arg2
+       , ", `street` ='"
+       ,arg3
+       , ", `city` ='"
+       ,arg4
+       , ", `state` ='"
+       ,arg5
+       , ", `zip` ='"
+       ,arg6
+       , ", `status` ='"
+       ,arg7
+       , "' WHERE `memberID` = '"
+       ,arg1
+       ,"' LIMIT 1"
+    );
+
+	PREPARE s1 FROM @sql_text;
+	EXECUTE s1;
+	DROP PREPARE s1;
+        
+
+    END CASE;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ModifyProvider`(IN `options` INT, IN `arg1` INT(9), IN `arg2` VARCHAR(40), IN `arg3` VARCHAR(100), IN `arg4` VARCHAR(50), IN `arg5` VARCHAR(2), IN `arg6` VARCHAR(7))
+    NO SQL
+BEGIN
+
+    CASE options
+    WHEN 1 THEN 
+   	 SET @sql_text = 
+   CONCAT (
+       "INSERT INTO `provider` VALUES ('"
+       ,arg1
+       ,"', '"
+       ,arg2
+       ,"', "
+       ,arg3
+       ,"', "
+       ,arg4
+       ,"', "
+       ,arg5
+       ,"', "
+       ,arg6
+       , ")"
+    );
+
+	PREPARE s1 FROM @sql_text;
+	EXECUTE s1;
+	DROP PREPARE s1;
+
+    WHEN 2 THEN 
+    	SET @sql_text = 
+   CONCAT (
+       "UPDATE `provider` SET 
+        `name` = "
+       ,arg2
+       , ", `street` ='"
+       ,arg3
+       , ", `city` ='"
+       ,arg4
+       , ", `state` ='"
+       ,arg5
+       , ", `zip` ='"
+       ,arg6
+       , "' WHERE `providerID` = '"
+       ,arg1
+       ,"' LIMIT 1"
+    );
+
+	PREPARE s1 FROM @sql_text;
+	EXECUTE s1;
+	DROP PREPARE s1;
+        
+
+    END CASE;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ModifyService`(IN `options` INT, IN `arg1` VARCHAR(4), IN `arg2` VARCHAR(200), IN `arg3` DOUBLE)
@@ -185,6 +353,7 @@ BEGIN
 END$$
 
 DELIMITER ;
+
 
 -- --------------------------------------------------------
 
