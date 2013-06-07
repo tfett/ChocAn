@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 28, 2013 at 03:36 AM
+-- Generation Time: Jun 07, 2013 at 04:38 AM
 -- Server version: 5.5.29
 -- PHP Version: 5.4.10
 
@@ -26,17 +26,17 @@ BEGIN
    CONCAT (
        "INSERT INTO `service` VALUES ('"
        ,arg1
-       ,"', '"
+       ,"', "
        ,arg2
-       ,"', "
+       ,", "
        ,arg3
-       ,"', "
+       ,", '"
        ,arg4
-       ,"', "
+       ,"', '"
        ,arg5
-       ,"', "
+       ,"', '"
        ,arg6
-       , ")"
+       , "')"
     );
 
 	PREPARE s1 FROM @sql_text;
@@ -270,15 +270,15 @@ BEGIN
        ,arg1
        ,"', '"
        ,arg2
-       ,"', "
+       ,"', '"
        ,arg3
-       ,"', "
+       ,"', '"
        ,arg4
-       ,"', "
+       ,"', '"
        ,arg5
-       ,"', "
+       ,"', '"
        ,arg6
-       , ")"
+       , "')"
     );
 
 	PREPARE s1 FROM @sql_text;
@@ -289,15 +289,15 @@ BEGIN
     	SET @sql_text = 
    CONCAT (
        "UPDATE `provider` SET 
-        `name` = "
+        `name` = '"
        ,arg2
-       , ", `street` ='"
+       , "', `street` ='"
        ,arg3
-       , ", `city` ='"
+       , "', `city` ='"
        ,arg4
-       , ", `state` ='"
+       , "', `state` ='"
        ,arg5
-       , ", `zip` ='"
+       , "', `zip` ='"
        ,arg6
        , "' WHERE `providerID` = '"
        ,arg1
@@ -354,7 +354,6 @@ END$$
 
 DELIMITER ;
 
-
 -- --------------------------------------------------------
 
 --
@@ -397,16 +396,17 @@ CREATE TABLE `provider` (
   `state` varchar(2) NOT NULL,
   `zip` varchar(5) NOT NULL,
   PRIMARY KEY (`providerID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
 
 --
 -- Dumping data for table `provider`
 --
 
 INSERT INTO `provider` (`providerID`, `name`, `street`, `city`, `state`, `zip`) VALUES
-(1, 'Choco Enterprises', '1435 Stark St.', 'Portland', 'OR', '97080'),
+(1, 'Choc Enterprises', '135 Stark St.', 'Gresham', 'OR', '97080'),
 (2, 'Chocolate Free', '7230 Division St.', 'Portland', 'OR', '97081'),
-(3, 'Choc-no', '4875 Burnside St.', 'Portland', 'OR', '97225');
+(3, 'Choc-no', '4875 Burnside St.', 'Portland', 'OR', '97225'),
+(4, 'Choc-O-Lot', '123 Some Dr.', 'Hillsboro', 'OR', '97080');
 
 -- --------------------------------------------------------
 
@@ -435,7 +435,9 @@ INSERT INTO `service` (`serviceDate`, `providerID`, `memberID`, `code`, `recordD
 ('2013-01-05', 1, 2, 'SHOK', '2013-02-05 05:44:32', 'Successful Implementation and Therapy'),
 ('2013-05-01', 1, 3, 'NUTR', '2013-05-02 07:44:32', 'Successful Implementation and Therapy'),
 ('2013-05-02', 2, 2, 'NUTR', '2013-05-08 19:01:29', 'Succesful Treatment Session, Great Progress'),
-('2013-05-03', 2, 3, 'SHOK', '2013-05-06 19:01:56', 'Unsuccesful requires another appt');
+('2013-05-03', 2, 3, 'SHOK', '2013-05-06 19:01:56', 'Unsuccesful requires another appt'),
+('2013-06-03', 1, 1, 'SHOK', '2013-06-05 08:39:38', 'GOOD'),
+('2013-09-04', 1, 1, 'SHOK', '2013-06-06 19:06:00', 'No Good');
 
 -- --------------------------------------------------------
 
@@ -446,7 +448,7 @@ INSERT INTO `service` (`serviceDate`, `providerID`, `memberID`, `code`, `recordD
 CREATE TABLE `serviceRel` (
   `code` varchar(4) NOT NULL,
   `description` varchar(200) NOT NULL,
-  `cost` float NOT NULL,
+  `cost` decimal(10,2) NOT NULL,
   PRIMARY KEY (`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -455,9 +457,9 @@ CREATE TABLE `serviceRel` (
 --
 
 INSERT INTO `serviceRel` (`code`, `description`, `cost`) VALUES
-('SHOK', 'Shock Therapy Treatement', 79.95),
-('NUTR', 'Nutritional Guidance Appointment', 75.99),
-('CONC', 'Mental Counseling Therapy', 125.99),
-('GROP', 'Group Counseling Therapy', 69.99),
-('GORG', 'Chocolate Overload Therapy', 35.99),
-('TEST', 'Some Description GOOD', 26.89);
+('SHOK', 'Shock Therapy Treatement', 81.99),
+('NUTR', 'Nutritional Guidance Appointment', 76.00),
+('CONC', 'Mental Counseling Therapy', 126.00),
+('GROP', 'Group Counseling Therapy', 70.00),
+('GORG', 'Chocolate Overload Therapy', 36.00),
+('TEST', 'Some Description GOOD?', 25.89);
